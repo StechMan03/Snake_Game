@@ -1,7 +1,8 @@
 import pygame
 import sys
 import time
-from constants import WIDTH, HEIGHT, BLACK, FPS, WHITE, BLUE
+from constants import (WIDTH, HEIGHT, SCORE_BAR_HEIGHT, CELL_SIZE, FPS, BLACK, WHITE,
+                       RED, LIGHT_BLUE, LIGHT_GREEN, BODY_COLOR)
 from assets import Assets
 from food import Food
 from snakebody import SnakeBody
@@ -14,15 +15,18 @@ game_screen = pygame.display.set_mode((WIDTH, HEIGHT))
 # font to show the score
 score = 0
 font_score = pygame.font.SysFont("arial", 30)
-font_game_over = pygame.font.SysFont("times new roman", 50, False, True)
+font_game_over = pygame.font.SysFont("Monospace", 50, True, True)
 
 clock = pygame.time.Clock()
 
-# TODO add grid, more fruit. make sure the snake cant touch the score
-
 assets = Assets()
-apple = Food(assets)
+
+# give default coordinates based on CELL_SIZE which is 20 pixels
 snake_body = SnakeBody([(60, 60), (40, 60), (20, 60)], assets)
+
+# Food to appear in game
+food = Food(assets, snake_body.body)
+
 direction_change_to = "RIGHT"
 
 
@@ -33,20 +37,22 @@ def check_violation():
     # check if snake runs into itself
     return (
         x >= WIDTH or x < 0 or
-        y >= HEIGHT or y < 0 or
+        y >= HEIGHT or y < SCORE_BAR_HEIGHT or
         snake_body.head in snake_body.body[1:]
     )
 
 
 def show_score():
-    surface_font = font_score.render(f"score is {score}", True, WHITE)
-    score_rect = surface_font.get_rect()
+    pygame.draw.rect(game_screen, WHITE, (0, 0, WIDTH, SCORE_BAR_HEIGHT))
 
-    game_screen.blit(surface_font, score_rect)
+    surface_font = font_score.render(f"score is {score}", True, LIGHT_BLUE)
+    text_rect = surface_font.get_rect(center=(WIDTH // 2, SCORE_BAR_HEIGHT // 2))
+
+    game_screen.blit(surface_font, text_rect)
 
 
 def game_over():
-    surface_font = font_score.render(f"your final score is {score}", True, BLUE)
+    surface_font = font_score.render(f"your final score is {score}", True, BODY_COLOR)
     score_rect = surface_font.get_rect(midtop=(WIDTH // 2, 200))
 
     game_screen.blit(surface_font, score_rect)
@@ -57,18 +63,31 @@ def game_over():
 def update_game():
     global score
     # check collision first then move the snake
-    if apple.position == snake_body.head:
-        apple.respawn()
+    if food.position == snake_body.head:
+        food.respawn(snake_body.body)
+        food.randomize_food()
         snake_body.grow = True
         score += 1
 
     snake_body.move()
 
 
+def add_grid():
+    for column in range(0, WIDTH, CELL_SIZE):
+        pygame.draw.line(game_screen, LIGHT_GREEN, (column, SCORE_BAR_HEIGHT), (column, HEIGHT))
+
+    # I want to make the first line red so that to display the border of the score rectangle
+    pygame.draw.line(game_screen, RED, (0, SCORE_BAR_HEIGHT), (WIDTH, SCORE_BAR_HEIGHT), 2)
+
+    for stripe in range(SCORE_BAR_HEIGHT + CELL_SIZE, HEIGHT, CELL_SIZE):
+        pygame.draw.line(game_screen, LIGHT_GREEN, (0, stripe), (WIDTH, stripe))
+
+
 def draw_game():
     game_screen.fill(BLACK)
+    add_grid()
     snake_body.draw(game_screen)
-    apple.draw(game_screen)
+    food.draw(game_screen)
     show_score()
     pygame.display.flip()
 

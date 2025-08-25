@@ -17,4 +17,9 @@ class Assets:
         self.tail_down = pygame.image.load("images/tail_down.png").convert_alpha()
         self.tail_right = pygame.image.load("images/tail_right.png").convert_alpha()
         self.tail_left = pygame.image.load("images/tail_left.png").convert_alpha()
-        self.apple = pygame.image.load("images/apple.png").convert_alpha()
+
+        self.food_images = {
+            "apple": pygame.image.load("images/apple.png").convert_alpha(),
+            "banana": pygame.image.load("images/banana.png").convert_alpha(),
+            "mouse": pygame.image.load("images/mouse.png").convert_alpha()
+        }

@@ -1,9 +1,11 @@
 # Colors
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
-BLUE = (0, 0, 255)
+LIGHT_BLUE = '#022BCD'
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
+LIGHT_GREEN = '#355E3B'
+BODY_COLOR = '#F1E0C5'
 
 # 20 pixel standard
 # WIDTH  = 36 * 20 = 720
@@ -12,4 +14,5 @@ GREEN = (0, 255, 0)
 WIDTH = 720
 HEIGHT = 480
 CELL_SIZE = 20
+SCORE_BAR_HEIGHT = 40
 FPS = 10
