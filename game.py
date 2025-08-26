@@ -1,8 +1,7 @@
 import pygame
 import sys
 import time
-from constants import (WIDTH, HEIGHT, SCORE_BAR_HEIGHT, CELL_SIZE, FPS, BLACK, WHITE,
-                       RED, LIGHT_BLUE, LIGHT_GREEN, BODY_COLOR)
+from constants import *
 from assets import Assets
 from food import Food
 from snakebody import SnakeBody
@@ -30,7 +29,7 @@ food = Food(assets, snake_body.body)
 direction_change_to = "RIGHT"
 
 
-def check_violation():
+def check_game_over():
     x, y = snake_body.head
     # boundaries (WIDTH and HEIGHT are up to their value -1 according to game_screen.
     # snake moves by 20 pixels so the at 720 it's a violation)
@@ -38,7 +37,8 @@ def check_violation():
     return (
         x >= WIDTH or x < 0 or
         y >= HEIGHT or y < SCORE_BAR_HEIGHT or
-        snake_body.head in snake_body.body[1:]
+        snake_body.head in snake_body.body[1:] or
+        check_victory()
     )
 
 
@@ -52,12 +52,19 @@ def show_score():
 
 
 def game_over():
-    surface_font = font_score.render(f"your final score is {score}", True, BODY_COLOR)
-    score_rect = surface_font.get_rect(midtop=(WIDTH // 2, 200))
+    if check_victory():
+        surface_font = font_score.render(f"You Wonnnn! your overall score is {score}", True, GOLD)
+    else:
+        surface_font = font_score.render(f"your final score is {score}", True, BODY_COLOR)
 
+    score_rect = surface_font.get_rect(midtop=(WIDTH // 2, 200))
     game_screen.blit(surface_font, score_rect)
     pygame.display.flip()
     time.sleep(2)
+
+
+def check_victory():
+    return len(snake_body.body) >= CELLS
 
 
 def update_game():
@@ -86,9 +93,9 @@ def add_grid():
 def draw_game():
     game_screen.fill(BLACK)
     add_grid()
+    show_score()
     snake_body.draw(game_screen)
     food.draw(game_screen)
-    show_score()
     pygame.display.flip()
 
 
@@ -112,7 +119,7 @@ while game_running:
             elif event.key == pygame.K_LEFT:
                 direction_change_to = "LEFT"
 
-    if check_violation():
+    if check_game_over():
         game_running = False
         break
 
