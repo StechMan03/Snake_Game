@@ -93,9 +93,9 @@ def add_grid():
 def draw_game():
     game_screen.fill(BLACK)
     add_grid()
-    show_score()
     snake_body.draw(game_screen)
     food.draw(game_screen)
+    show_score()
     pygame.display.flip()
 
 
