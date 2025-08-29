@@ -110,6 +110,7 @@ while game_running:
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
                 game_running = False
+                break
             elif event.key == pygame.K_UP:
                 direction_change_to = "UP"
             elif event.key == pygame.K_DOWN:
